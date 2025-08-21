@@ -2,9 +2,9 @@
 let isAdvancedModeOpen = false;
 
 // API 常量
-const ARK_BASE_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:3000/api/v3'  // 本地开发环境
-    : '/api/proxy';                   // Vercel生产环境
+const ARK_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? `${window.location.origin}/api/v3`  // 本地开发环境：跟随当前端口
+    : '/api/proxy';                        // Vercel生产环境
 const ARK_API_KEY = '9bd00217-f46c-487a-b2b3-e98b424b18b1';
 const TEXT_MODEL = 'doubao-seed-1-6-250615';
 const IMAGE_MODEL = 'doubao-seedream-3-0-t2i-250415';

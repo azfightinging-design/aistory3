@@ -38,8 +38,8 @@
         // 显示当前环境信息
         document.getElementById('current-domain').textContent = window.location.hostname;
         
-        const isLocalhost = window.location.hostname === 'localhost';
-        const apiUrl = isLocalhost ? 'http://localhost:3000/api/v3' : '/api/proxy';
+        const isLocalhost = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+        const apiUrl = isLocalhost ? `${window.location.origin}/api/v3` : '/api/proxy';
         document.getElementById('api-url').textContent = apiUrl;
 
         // 测试基本API连接
