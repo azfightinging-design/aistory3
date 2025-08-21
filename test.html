@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API连接测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .success { color: green; }
+        .error { color: red; }
+        button { padding: 10px 20px; margin: 10px; cursor: pointer; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>绘梦AI屋 - API连接测试</h1>
+    
+    <div class="test-section">
+        <h2>环境检测</h2>
+        <p>当前域名: <span id="current-domain"></span></p>
+        <p>API地址: <span id="api-url"></span></p>
+    </div>
+
+    <div class="test-section">
+        <h2>API连接测试</h2>
+        <button onclick="testAPI()">测试API连接</button>
+        <div id="api-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>火山引擎API测试</h2>
+        <button onclick="testVolcanoAPI()">测试火山引擎API</button>
+        <div id="volcano-result"></div>
+    </div>
+
+    <script>
+        // 显示当前环境信息
+        document.getElementById('current-domain').textContent = window.location.hostname;
+        
+        const isLocalhost = window.location.hostname === 'localhost';
+        const apiUrl = isLocalhost ? 'http://localhost:3000/api/v3' : '/api/proxy';
+        document.getElementById('api-url').textContent = apiUrl;
+
+        // 测试基本API连接
+        async function testAPI() {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.innerHTML = '<p>正在测试...</p>';
+            
+            try {
+                const response = await fetch(apiUrl + '/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer test-key'
+                    },
+                    body: JSON.stringify({
+                        model: 'test',
+                        messages: [{ role: 'user', content: 'test' }]
+                    })
+                });
+                
+                if (response.status === 401) {
+                    resultDiv.innerHTML = '<p class="success">✅ API连接成功！收到401错误是正常的（因为使用了测试密钥）</p>';
+                } else {
+                    resultDiv.innerHTML = `<p class="success">✅ API连接成功！状态码: ${response.status}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ API连接失败: ${error.message}</p>`;
+            }
+        }
+
+        // 测试火山引擎API
+        async function testVolcanoAPI() {
+            const resultDiv = document.getElementById('volcano-result');
+            resultDiv.innerHTML = '<p>正在测试火山引擎API...</p>';
+            
+            try {
+                const response = await fetch(apiUrl + '/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer 9bd00217-f46c-487a-b2b3-e98b424b18b1'
+                    },
+                    body: JSON.stringify({
+                        model: 'doubao-seed-1-6-250615',
+                        messages: [
+                            { role: 'user', content: '你好，请简单回复一下' }
+                        ]
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <p class="success">✅ 火山引擎API连接成功！</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `
+                        <p class="error">❌ 火山引擎API返回错误: ${response.status}</p>
+                        <pre>${errorText}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ 火山引擎API连接失败: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
