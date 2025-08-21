@@ -11,6 +11,9 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// 解析 JSON 请求体
+app.use(express.json());
+
 // 静态文件服务
 app.use(express.static('.'));
 
@@ -19,7 +22,7 @@ app.use('/api/v3', async (req, res) => {
     try {
         // 获取目标路径
         const targetPath = req.url;
-        const targetUrl = `https://ark.cn-beijing.volces.com${targetPath}`;
+        const targetUrl = `https://ark.cn-beijing.volces.com/api/v3${targetPath}`;
 
         console.log('Proxying request to:', targetUrl);
 
